@@ -26,7 +26,6 @@ class _MovieHomeState extends State<MovieHome> {
 
   @override
   Widget build(BuildContext context) {
-    final MovieProvider = context.watch<MoviesProvider>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 15),

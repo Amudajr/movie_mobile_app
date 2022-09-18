@@ -37,6 +37,7 @@ class MoviesProvider extends ChangeNotifier {
         notifyListeners();
       }
     } catch (error) {
+      print(error);
       _loading = false;
       _movies = <MoviesModel>[];
       notifyListeners();
