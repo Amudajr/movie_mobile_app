@@ -18,7 +18,7 @@ class MoviesCard extends StatelessWidget {
         : ListView.separated(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            itemCount: 6,
+            itemCount: moviesProvider.movies.length,
             separatorBuilder: (context, index) => const SizedBox(width: 15),
             itemBuilder: (context, index) {
               final movie = moviesProvider.movies[index];
@@ -50,7 +50,7 @@ class MoviesCard extends StatelessWidget {
                               width: 10,
                             ),
                             Text(
-                              "3.7m",
+                              movie.rank.toString(),
                               style:
                                   TextStyle(fontSize: 10, color: Colors.grey),
                             )
@@ -68,7 +68,7 @@ class MoviesCard extends StatelessWidget {
                             ),
                             SizedBox(height: 5),
                             Text(
-                              "The Wolf Disney",
+                              movie.ratings.toString(),
                               style: TextStyle(fontSize: 12),
                             ),
                           ],

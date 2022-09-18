@@ -27,7 +27,6 @@ class MoviesProvider extends ChangeNotifier {
         final allmovies = (data['items'] as List)
             .map((e) => MoviesModel.fromJson(e as Map<String, dynamic>))
             .toList();
-
         final seeMovies = allmovies.toList();
         _movies = seeMovies;
         notifyListeners();
