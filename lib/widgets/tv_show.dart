@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/provider/movies_provider.dart';
+import 'package:provider/provider.dart';
 
 class TvShows extends StatelessWidget {
   const TvShows({

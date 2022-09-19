@@ -27,7 +27,7 @@ class MoviesCard extends StatelessWidget {
                     color: Color.fromARGB(255, 200, 197, 197),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  height: 150,
+                  height: 170,
                   width: 150,
                   child: Padding(
                     padding:
@@ -35,13 +35,13 @@ class MoviesCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Image.asset(
-                          "assets/nbc.png",
-                          height: 40,
-                          width: 50,
+                        Image.network(
+                          movie.image.toString(),
+                          height: 50,
+                          width: 65,
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         Row(
                           children: [
@@ -56,17 +56,14 @@ class MoviesCard extends StatelessWidget {
                             )
                           ],
                         ),
-                        SizedBox(
-                          height: 15,
-                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              movie.fullTitle!,
+                              movie.fullTitle.toString(),
                               style: TextStyle(fontSize: 16),
                             ),
-                            SizedBox(height: 5),
+                            SizedBox(height: 2),
                             Text(
                               movie.ratings.toString(),
                               style: TextStyle(fontSize: 12),

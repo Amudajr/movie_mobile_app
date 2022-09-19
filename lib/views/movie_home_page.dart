@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:movie_app/models/search_model.dart';
 import 'package:movie_app/provider/movies_provider.dart';
+import 'package:movie_app/provider/search_provider.dart';
 import 'package:movie_app/views/movie_details.dart';
+import 'package:movie_app/views/search_page.dart';
 import 'package:movie_app/widgets/movies_card.dart';
 import 'package:movie_app/widgets/tv_card.dart';
 import 'package:movie_app/widgets/tv_show.dart';
@@ -16,6 +19,7 @@ class MovieHome extends StatefulWidget {
 }
 
 class _MovieHomeState extends State<MovieHome> {
+  TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -33,6 +37,12 @@ class _MovieHomeState extends State<MovieHome> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
+              onFieldSubmitted: (value) {
+                context.read<SearchProvider>().getSeacrh(value);
+                // Navigator.push(context,
+                //     MaterialPageRoute(builder: (context) => SearchResult()));
+              },
+              controller: searchController,
               style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                   suffixIcon: IconButton(
