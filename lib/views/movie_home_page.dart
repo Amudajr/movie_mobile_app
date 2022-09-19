@@ -1,132 +1,127 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:movie_app/models/search_model.dart';
-import 'package:movie_app/provider/movies_provider.dart';
-import 'package:movie_app/provider/search_provider.dart';
-import 'package:movie_app/views/movie_details.dart';
-import 'package:movie_app/views/search_page.dart';
-import 'package:movie_app/widgets/movies_card.dart';
-import 'package:movie_app/widgets/tv_card.dart';
-import 'package:movie_app/widgets/tv_show.dart';
-import 'package:provider/provider.dart';
+import 'dart:convert';
 
-class MovieHome extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_app/global_provider.dart';
+import 'package:movie_app/models/movie.dart';
+import 'package:movie_app/widgets/widgets.dart';
+import 'package:http/http.dart' as http;
+
+import '../utils/constants.dart';
+
+final moviesProvider = FutureProvider<List<MoviesModel>>((ref) async {
+  final response = await http.get(
+    Uri.parse('${Constants.baseUrl}/Top250Movies/${Constants.myKey}'),
+  );
+  // if (response.statusCode == HttpStatus.ok) {
+  final data = jsonDecode(response.body);
+  final allmovies = (data['items'] as List)
+      .map((e) => MoviesModel.fromJson(e as Map<String, dynamic>))
+      .toList();
+  final seeMovies = allmovies.toList();
+  return seeMovies;
+});
+
+final tvProvider = FutureProvider<List<MoviesModel>>((ref) async {
+  final response = await http.get(
+    Uri.parse('${Constants.baseUrl}/Top250TVs/${Constants.myKey}'),
+  );
+  // if (response.statusCode == HttpStatus.ok) {
+  final data = jsonDecode(response.body);
+  final allmovies = (data['items'] as List)
+      .map((e) => MoviesModel.fromJson(e as Map<String, dynamic>))
+      .toList();
+  final seeMovies = allmovies.toList();
+  return seeMovies;
+});
+
+class MovieHome extends ConsumerStatefulWidget {
   const MovieHome({Key? key}) : super(key: key);
 
   @override
-  State<MovieHome> createState() => _MovieHomeState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MovieHomeState();
 }
 
-class _MovieHomeState extends State<MovieHome> {
-  TextEditingController searchController = TextEditingController();
+class _MovieHomeState extends ConsumerState<MovieHome> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context.read<MoviesProvider>().getMovies();
+      ref.read(movieProvider.notifier).getMovies();
+      ref.read(movieProvider.notifier).getTvShows();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final moviesProvider = ref.watch(movieProvider);
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              onFieldSubmitted: (value) {
-                context.read<SearchProvider>().getSeacrh(value);
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => SearchResult()));
-              },
-              controller: searchController,
-              style: const TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MovieDetails()));
-                      },
-                      icon: Icon(Icons.search_off_rounded)),
-                  isDense: true,
-                  contentPadding: EdgeInsets.fromLTRB(20, 25, 25, 0),
-                  focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                    ),
-                  ),
-                  border: const OutlineInputBorder(),
-                  labelText: "Type Movie Name",
-                  labelStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: IconButton(
-                      onPressed: () {}, icon: (Icon(Icons.search_rounded)))),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Text("Entertainment",
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SearchFiled(),
+              const SizedBox(
+                height: 15,
+              ),
+              const Text(
+                "Entertainment",
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
-                )),
-            SizedBox(
-              height: 25,
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("TV channels",
+                ),
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "TV channels",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                        )),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                        height: 170,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        height: 300,
                         width: MediaQuery.of(context).size.width,
-                        child: TvChannels()),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text("Movies",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        )),
-                    SizedBox(
-                      height: 14,
-                    ),
-                    SizedBox(
-                        height: 170,
+                        child: const TvList(),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Text("Movies",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      const SizedBox(
+                        height: 14,
+                      ),
+                      SizedBox(
+                        height: 300,
                         width: MediaQuery.of(context).size.width,
-                        child: MoviesCard()),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                        height: 45,
-                        width: MediaQuery.of(context).size.width,
-                        child: TvShows()),
-                  ]),
-            ),
-          ],
+                        child: const MoviesList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

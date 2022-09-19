@@ -12,14 +12,14 @@ class SearchProvider extends ChangeNotifier {
   bool get loading => _loading;
   List<SearchModel> get search => _search;
 
-  Future<void> getSeacrh(String value) async {
-    print(value);
+  Future<void> searchMovie(String value) async {
     try {
       _loading = true;
       notifyListeners();
       final response = await http.get(
         Uri.parse('${Constants.baseUrl}/SearchTitle/${Constants.myKey}/$value'),
       );
+      print(response.body);
       if (response.statusCode == HttpStatus.ok) {
         _loading = false;
         notifyListeners();
